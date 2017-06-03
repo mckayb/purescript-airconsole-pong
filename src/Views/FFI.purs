@@ -1,4 +1,4 @@
-module Views.FFI where
+module AirConsolePong.Views.FFI where
 
 import Prelude (Unit)
 import Control.Monad.Eff (Eff)

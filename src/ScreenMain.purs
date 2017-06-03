@@ -1,4 +1,4 @@
-module ScreenMain where
+module AirConsolePong.ScreenMain where
 
 import Prelude
 import Control.Monad.Eff (Eff)
@@ -10,8 +10,8 @@ import AirConsole.Global ( getAirConsoleGlobal
                          , onConnect
                          , onDisconnect
                          )
-import Views.FFI (onDOMContentLoaded)
-import Views.ScreenStart (view)
+import AirConsolePong.Views.FFI (onDOMContentLoaded)
+import AirConsolePong.Views.ScreenStart (view)
 import DOM (DOM)
 
 main :: Eff (dom :: DOM, console :: CONSOLE) Unit

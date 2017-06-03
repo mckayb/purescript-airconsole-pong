@@ -1,4 +1,4 @@
-module Views.ScreenStart where
+module AirConsolePong.Views.ScreenStart where
 
 import AirConsole.Types (AirConsoleGlobal)
 import Control.Monad.Eff (Eff)

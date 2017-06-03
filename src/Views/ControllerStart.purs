@@ -1,4 +1,4 @@
-module Views.ControllerStart where
+module AirConsolePong.Views.ControllerStart where
 
 import Control.Monad.Eff (Eff)
 import Text.Smolder.HTML (div)
