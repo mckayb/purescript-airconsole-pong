@@ -44,12 +44,9 @@ view ac = do
                     ! className "button" $ do
                         div ! className "button_label" $ text "DOWN"
                 div ! className "player_id" $ text "It's a 2 player game"
-
-            renderMaybeToElem :: forall e. Element -> Eff (dom :: DOM | e) Unit
-            renderMaybeToElem = render' markup
           in
             case body of
-                 Just x -> renderMaybeToElem x
+                 Just x -> render' markup x
                  Nothing -> pure unit
     pure unit
 

@@ -10,10 +10,14 @@ import AirConsole.Global ( getAirConsoleGlobal
                          , onConnect
                          , onDisconnect
                          )
+import Views.FFI (onDOMContentLoaded)
+import Views.ScreenStart (view)
+import DOM (DOM)
 
-main :: Eff (console :: CONSOLE) Unit
-main = do
+main :: Eff (dom :: DOM, console :: CONSOLE) Unit
+main = onDOMContentLoaded do
     ac <- getAirConsoleGlobal { orientation: orientationLandscape }
+    view ac
     _ <- onReady (\c -> log "Ready Bro") ac
     _ <- onMessage (\d x -> log "Message Received") ac
     _ <- onConnect (\d -> log "On Connection") ac
