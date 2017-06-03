@@ -16,14 +16,15 @@ import Views.FFI (renderToSel, onDOMContentLoaded)
 import Text.Smolder.HTML (button)
 import Text.Smolder.Markup (text, on, (#!))
 import Text.Smolder.Renderer.String (render)
+import DOM (DOM)
 
 foreign import isNullOrUndefined :: forall a. a -> Boolean
 
-main :: forall e. Eff (console :: CONSOLE | e) Unit
+main :: forall e. Eff (dom :: DOM, console :: CONSOLE | e) Unit
 main = onDOMContentLoaded do
-  log "Ready"
-  -- ac <- getAirConsoleGlobal { orientation: orientationPortrait }
-  -- _ <- renderToSel "body" (view ac)
+  ac <- getAirConsoleGlobal { orientation: orientationPortrait }
+  view ac
+  log "Done!"
   -- _ <- onMessage
         -- (\from d -> if d.vibrate && from == screen
                     -- then vibrate ac 1000
