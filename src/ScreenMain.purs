@@ -5,10 +5,10 @@ import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import AirConsole.Global ( getAirConsoleGlobal
                          , orientationLandscape
-                         -- , onMessage
-                         -- , onReady
+                         , onMessage
+                         , onReady
                          , onConnect
-                         -- , onDisconnect
+                         , onDisconnect
                          )
 import AirConsole.Types (AirConsoleGlobal, DeviceId)
 import AirConsole.ActivePlayers ( getActivePlayerDeviceIds
@@ -67,4 +67,4 @@ main = onDOMContentLoaded do
     _ <- onMessage (\d x -> log "Message Received") ac
     _ <- onReady (\c -> log "Ready Bro") ac
     _ <- onDisconnect (\d -> log "On Disconnect") ac
-    log "Screen IS NOT Ready"
+    log "Screen Is Ready"
