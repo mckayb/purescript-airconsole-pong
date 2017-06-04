@@ -13,7 +13,6 @@ import DOM.HTML (window)
 import DOM.HTML.Window (document)
 import DOM.HTML.Document (body)
 import DOM.HTML.Types (htmlElementToElement)
-import DOM.Node.Types (Element)
 import DOM.Event.EventTarget (EventListener, eventListener)
 import Data.Maybe (Maybe(Just, Nothing))
 import Prelude hiding (div)
@@ -46,16 +45,9 @@ view ac = do
                 div ! className "player_id" $ text "It's a 2 player game"
           in
             case body of
-                 Just x -> render' markup x
+                 Just x -> render x markup
                  Nothing -> pure unit
     pure unit
-
-render'
-    :: forall e
-     . Markup (EventListener (dom :: DOM | e))
-    -> Element
-    -> Eff (dom :: DOM | e) Unit
-render' a m = render m a
 
 move :: forall a b c. AirConsoleGlobal -> Int -> a -> Eff b c
 move ac n = \_ -> message ac screen { move: n }

@@ -8,7 +8,6 @@ import DOM.HTML (window)
 import DOM.HTML.Window (document)
 import DOM.HTML.Document (body)
 import DOM.HTML.Types (htmlElementToElement)
-import DOM.Node.Types (Element)
 import DOM.Event.EventTarget (EventListener)
 import Text.Smolder.HTML (div, canvas)
 import Text.Smolder.HTML.Attributes (className)
@@ -29,13 +28,6 @@ view ac = do
                     div ! className "game__wait" $ text ""
           in
             case body of
-                 Just x -> render' markup x
+                 Just x -> render x markup
                  Nothing -> pure unit
     pure unit
-
-render'
-    :: forall e
-     . Markup (EventListener (dom :: DOM | e))
-    -> Element
-    -> Eff (dom :: DOM | e) Unit
-render' a m = render m a
