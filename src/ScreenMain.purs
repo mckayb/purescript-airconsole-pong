@@ -56,10 +56,12 @@ handleNewConnection ac gs =
                 _ <- updateDOMWait ""
                 _ <- updateDOMScore gs'.score
                 pure unit
-            else do
+        else if apLength == 0
+            then do
                 _ <- updateDOMWait ("Need " <> show numNeeded <> " more " <> playerStr)
                 _ <- pure (resetBall 0.0 0.0 gs)
                 pure unit
+            else pure unit
 
 handleDisconnect :: AirConsoleGlobal -> GameState -> DeviceId -> Eff (dom :: DOM) Unit
 handleDisconnect ac gs d = do
@@ -68,6 +70,11 @@ handleDisconnect ac gs d = do
               Just pn -> setActivePlayers ac 0
               Nothing -> pure unit
     handleNewConnection ac gs
+
+handleMessage :: AirConsoleGlobal -> GameState -> DeviceId -> { move :: Number } -> Eff (dom :: DOM) Unit
+handleMessage ac gs d { move: x } = do
+    fp <- (pure <<< toMaybe <<< convertDeviceIdToPlayerNumber ac) d
+    pure unit
 
 resetScore :: GameState -> GameState
 resetScore gs = gs { score { p1 = 0, p2 = 0 } }
@@ -97,7 +104,7 @@ main = onDOMContentLoaded do
     ac <- getAirConsoleGlobal { orientation: orientationLandscape }
     view ac
     _ <- onConnect (\d -> handleNewConnection ac initGameState) ac
-    _ <- onMessage (\d x -> log "Message Received") ac
+    _ <- onMessage (\d x -> handleMessage ac initGameState d x) ac
     _ <- onReady (\c -> log "Ready Bro") ac
     _ <- onDisconnect (\d -> handleDisconnect ac initGameState d) ac
     log "Screen Is Ready"

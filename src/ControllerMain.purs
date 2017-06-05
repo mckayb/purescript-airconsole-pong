@@ -10,8 +10,6 @@ import AirConsolePong.Views.ControllerStart (view)
 import AirConsolePong.Views.FFI (onDOMContentLoaded)
 import DOM (DOM)
 
-foreign import isNullOrUndefined :: forall a. a -> Boolean
-
 main :: forall e. Eff (dom :: DOM, console :: CONSOLE | e) Unit
 main = onDOMContentLoaded do
   ac <- getAirConsoleGlobal { orientation: orientationPortrait }

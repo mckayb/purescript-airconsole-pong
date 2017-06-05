@@ -17,3 +17,7 @@ exports.onDOMContentLoaded = function onDOMContentLoaded(action) {
     }
   }
 }
+
+exports.isNullOrUndefined = function (x) {
+  return x === null || x === undefined
+}
