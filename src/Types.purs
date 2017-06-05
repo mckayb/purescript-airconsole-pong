@@ -1,6 +1,6 @@
 module AirConsolePong.Types where
 
-import DOM.Node.Types (Element)
+-- import DOM.Node.Types (Element)
 
 type Coord = { x :: Number, y :: Number }
 
