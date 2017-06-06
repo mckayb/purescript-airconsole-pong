@@ -30,7 +30,7 @@ import DOM (DOM)
 foreign import requestAnimationFrame :: forall e . (Number -> Eff e Unit) -> Eff e Unit
 foreign import showStuff :: forall a. a -> Eff (console :: CONSOLE) Unit
 
-handleNewConnection :: AirConsoleGlobal -> GameState -> Eff (dom :: DOM) Unit
+{- handleNewConnection :: AirConsoleGlobal -> GameState -> Eff (dom :: DOM) Unit
 handleNewConnection ac gs =
     let
         apLength :: Int
@@ -85,20 +85,6 @@ resetBall moveX moveY gs = gs { ball { pos { x = 100.0, y = 50.0 }
                                      }
                               }
 
-initGameState :: GameState
-initGameState = { p1 , p2 , ball , score }
-  where
-    p1 = { pos: { x: 10.0, y: 50.0 }
-         , move: { x: 0.0, y: 0.0 }
-         }
-    p2 = { pos: { x: 190.0, y: 53.0 }
-         , move: { x: 0.0, y: 0.0 }
-         }
-    ball = { pos: { x: 100.0, y: 50.0 }
-           , move: { x: 0.0, y: 0.0 }
-           }
-    score = { p1: 0, p2: 0 }
-
 main :: Eff (dom :: DOM, console :: CONSOLE) Unit
 main = onDOMContentLoaded do
     ac <- getAirConsoleGlobal { orientation: orientationLandscape }
@@ -107,4 +93,48 @@ main = onDOMContentLoaded do
     _ <- onMessage (\d x -> handleMessage ac initGameState d x) ac
     _ <- onReady (\c -> log "Ready Bro") ac
     _ <- onDisconnect (\d -> handleDisconnect ac initGameState d) ac
-    log "Screen Is Ready"
+    log "Screen Is Ready" -}
+
+handleNewConnection :: AirConsoleGlobal -> GameState -> Eff (dom :: DOM) Unit
+handleNewConnection ac gs =
+    let
+        apLength :: Int
+        apLength = (length <<< getActivePlayerDeviceIds) ac
+
+        cdLength :: Int
+        cdLength = (length <<< getControllerDeviceIds) ac
+
+        numNeeded :: Int
+        numNeeded = 2 - cdLength
+
+        playerStr :: String
+        playerStr = if numNeeded == 1
+                        then "player!"
+                    else if numNeeded >= 2
+                        then "players!"
+                    else ""
+
+     in
+         if apLength == 0 && cdLength >= 2
+            then do
+                _ <- setActivePlayers ac 2
+                _ <- runGame ac initGameState
+                _ <- updateDOMWait ""
+                _ <- updateDOMScore gs'.score
+                pure unit
+        else if apLength == 0
+            then do
+                _ <- updateDOMWait ("Need " <> show numNeeded <> " more " <> playerStr)
+                _ <- pure (resetBall 0.0 0.0 gs)
+                pure unit
+        else pure unit
+
+
+runGame :: forall e. AirConsoleGlobal -> GameEnvironment -> Eff (dom :: DOM | e) Unit
+runGame ac env = do
+
+main = onDOMContentLoaded do
+    ac <- getAirConsoleGlobal { orientation: orientationLandscape }
+    view ac
+    _ <- onConnect (\d -> handleNewConnection ac initGameState) ac
+

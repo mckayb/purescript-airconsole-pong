@@ -13,7 +13,7 @@ import Text.Smolder.HTML (div, canvas)
 import Text.Smolder.HTML.Attributes (className)
 import Text.Smolder.Markup (Markup, text, (!))
 import Text.Smolder.Renderer.DOM (render)
-import AirConsolePong.Types (Score)
+import AirConsolePong.Types (PlayerScore)
 import AirConsolePong.Views.FFI (renderToSel)
 import Prelude hiding (div)
 
@@ -37,6 +37,6 @@ view ac = do
 updateDOMWait :: forall eff. String -> Eff (dom :: DOM | eff) Unit
 updateDOMWait str = renderToSel ".game__score" str
 
-updateDOMScore :: forall eff. Score -> Eff (dom :: DOM | eff) Unit
-updateDOMScore score = renderToSel ".game__wait" scoreText
-    where scoreText = (show score.p1) <> " : " <> (show score.p2)
+updateDOMScore :: forall eff. PlayerScore -> PlayerScore -> Eff (dom :: DOM | eff) Unit
+updateDOMScore p1Score p2Score = renderToSel ".game__wait" scoreText
+    where scoreText = (show p1Score) <> " : " <> (show p2Score)
