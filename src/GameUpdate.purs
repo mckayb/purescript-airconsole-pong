@@ -1,6 +1,7 @@
 module AirConsolePong.GameUpdate where
 
-import AirConsolePong.GameModel (Player, Ball, Model)
+import Prelude ((+))
+import AirConsolePong.GameModel (Player, Ball)
 
 movePlayer :: Number -> Player -> Player
 movePlayer n p = p { y = p.y + n }

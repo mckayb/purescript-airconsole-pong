@@ -8,16 +8,23 @@ exports.renderToSel = function renderToSel(sel) {
   }
 }
 
-exports.onDOMContentLoaded = function onDOMContentLoaded(action) {
-  return function() {
-    if (document.readyState === "interactive") {
-      action()
-    } else {
-      document.addEventListener("DOMContentLoaded", action)
-    }
+exports.isNullOrUndefined = function (x) {
+  return x === null || x === undefined
+}
+
+exports.updateCanvasDim = function (elem) {
+  return function () {
+    elem.width = elem.clientWidth
+    elem.height = elem.clientHeight
   }
 }
 
-exports.isNullOrUndefined = function (x) {
-  return x === null || x === undefined
+exports.getClientHeight = function (elem) {
+  return function () {
+    return elem.clientHeight
+  }
+}
+
+exports.bitwiseOr = function (x) {
+  return x | 0
 }
