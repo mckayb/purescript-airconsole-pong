@@ -7,11 +7,10 @@ import AirConsole.Global ( getAirConsoleGlobal
                          , orientationPortrait
                          )
 import AirConsolePong.Views.ControllerStart (view)
-import AirConsolePong.Views.FFI (onDOMContentLoaded)
 import DOM (DOM)
 
 main :: forall e. Eff (dom :: DOM, console :: CONSOLE | e) Unit
-main = onDOMContentLoaded do
+main = do
   ac <- getAirConsoleGlobal { orientation: orientationPortrait }
   view ac
   log "Controller Ready!"
