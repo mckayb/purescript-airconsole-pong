@@ -1,13 +1,13 @@
 module AirConsolePong.ScreenMain where
 
-import Prelude (Unit, negate, discard, bind, pure, unit, (<$>))
+import Prelude (Unit, discard, bind, pure, unit, (<$>))
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import Control.Monad.Eff.Timer (TIMER)
 import AirConsole.Global ( getAirConsoleGlobal , orientationLandscape
                          , onConnect , onReady , onMessage , onDisconnect
                          )
-import AirConsolePong.Views.FFI (updateCanvasDim, showStuff)
+import AirConsolePong.Views.FFI (updateCanvasDim)
 import AirConsolePong.Views.ScreenStart (view , drawGame)
 import AirConsolePong.GameModel (initialGameState)
 import AirConsolePong.GameUpdate (gameLogic)
@@ -55,17 +55,14 @@ main = do
     ac <- getAirConsoleGlobal { orientation: orientationLandscape }
     ch <- channel { p1: { move: 0.0 }
                   , p2: { move: 0.0 }
-                  , ball: { x: 0.5, y: 0.2 }
+                  , ball: { x: 0.0, y: 0.0 }
                   }
     view ac
     _ <- onConnect (\d -> log "on Connection") ac
     _ <- onMessage (\d x -> do
-                        log "Message: "
-                        showStuff d
-                        showStuff x
-                        send ch { p1: { move: 1.0 }
-                                , p2: { move: -1.0 }
-                                , ball: { x: 0.5, y: 0.2 }
+                        send ch { p1: { move: x.move }
+                                , p2: { move: 0.0 }
+                                , ball: { x: 0.0, y: 0.0 }
                                 }
                    ) ac
     _ <- onReady (\d -> log "on Ready") ac

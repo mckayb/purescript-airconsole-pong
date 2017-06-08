@@ -22,24 +22,24 @@ view ac = do
     doc <- window >>= document
     body <- map htmlElementToElement <$> body doc
     _ <- let
-            startListener = eventListener (move ac 0)
-            endListener = eventListener (move ac 50)
+            startListener n = eventListener (move ac n)
+            endListener n = eventListener (move ac n)
 
             markup :: forall e. Markup (EventListener ( | e))
             markup =
                 div ! className "view default-view" $ do
                 div ! height "1%" $ text ""
-                div #! on "touchstart" startListener
-                    #! on "touchend" endListener
-                    #! on "mousedown" startListener
-                    #! on "mouseup" endListener
+                div #! on "touchstart" (startListener (-1.0))
+                    #! on "touchend" (endListener 0.0)
+                    #! on "mousedown" (startListener (-1.0))
+                    #! on "mouseup" (endListener 0.0)
                     ! className "button" $ do
                     div ! className "button_label" $ text "UP"
                 div ! height "8%" $ text ""
-                div #! on "touchstart" startListener
-                    #! on "touchend" endListener
-                    #! on "mousedown" startListener
-                    #! on "mouseup" endListener
+                div #! on "touchstart" (startListener 1.0)
+                    #! on "touchend" (endListener 0.0)
+                    #! on "mousedown" (startListener 1.0)
+                    #! on "mouseup" (endListener 0.0)
                     ! className "button" $ do
                         div ! className "button_label" $ text "DOWN"
                 div ! className "player_id" $ text "It's a 2 player game"
@@ -49,5 +49,5 @@ view ac = do
                  Nothing -> pure unit
     pure unit
 
-move :: forall a b c. AirConsoleGlobal -> Int -> a -> Eff b c
+move :: forall a b c. AirConsoleGlobal -> Number -> a -> Eff b c
 move ac n = \_ -> message ac screen { move: n }
