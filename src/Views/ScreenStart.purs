@@ -13,7 +13,7 @@ import Text.Smolder.HTML (div, canvas)
 import Text.Smolder.HTML.Attributes (id, className)
 import Text.Smolder.Markup (Markup, text, (!))
 import Text.Smolder.Renderer.DOM (render) as S
-import AirConsolePong.GameModel (Game)
+import AirConsolePong.Game.Model (Game)
 import AirConsolePong.Views.FFI (getClientHeight, bitwiseOr, clearCanvas)
 import Graphics.Canvas ( CANVAS
                        , CanvasElement

@@ -1,7 +1,7 @@
-module AirConsolePong.GameUpdate where
+module AirConsolePong.Game.Update where
 
 import Prelude ((+))
-import AirConsolePong.GameModel (Player, Ball, Game)
+import AirConsolePong.Game.Model (Player, Ball, Game)
 
 type Input = { p1 :: { move :: Number }
              , p2 :: { move :: Number }

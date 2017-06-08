@@ -1,4 +1,4 @@
-module AirConsolePong.GameModel where
+module AirConsolePong.Game.Model where
 
 -- Model
 type Player =
