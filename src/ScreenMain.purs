@@ -10,18 +10,13 @@ import AirConsole.Global ( getAirConsoleGlobal , orientationLandscape
 import AirConsolePong.Views.FFI (updateCanvasDim)
 import AirConsolePong.Views.ScreenStart (view , drawGame)
 import AirConsolePong.GameModel (initialGameState)
-import AirConsolePong.GameUpdate (gameLogic)
+import AirConsolePong.GameUpdate (gameLogic, Input)
 import Data.Maybe (Maybe(Just, Nothing))
 import DOM (DOM)
 import Graphics.Canvas (CANVAS, getCanvasElementById)
 import Signal (foldp, runSignal, sampleOn)
 import Signal.DOM (animationFrame)
 import Signal.Channel (channel, send, subscribe, Channel, CHANNEL)
-
-type Input = { p1 :: { move :: Number }
-             , p2 :: { move :: Number }
-             , ball :: { x :: Number, y :: Number }
-             }
 
 startGame
     :: forall eff
