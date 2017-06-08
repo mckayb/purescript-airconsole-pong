@@ -2,7 +2,6 @@ module AirConsolePong.Views.ScreenStart where
 
 import AirConsole.Types (AirConsoleGlobal)
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE)
 import Data.Maybe (Maybe(Just, Nothing))
 import DOM (DOM)
 import DOM.HTML (window)
@@ -24,7 +23,7 @@ import Graphics.Drawing ( render , fillColor
                         , filled, rectangle, circle
                         , Drawing, Shape, FillStyle
                         )
-import Color (black, white)
+import Color (white)
 import Prelude hiding (div, id)
 
 view :: forall eff. AirConsoleGlobal -> Eff (dom :: DOM | eff) Unit
