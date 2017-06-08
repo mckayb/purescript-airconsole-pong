@@ -35,7 +35,8 @@ initialGameState =
           }
     , ball: { x: 100.0
             , y: 50.0
-            , dx: 0.0 , dy: 0.0
+            , dx: 0.0
+            , dy: 0.0
             }
     }
 
