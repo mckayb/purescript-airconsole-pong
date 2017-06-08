@@ -1,7 +1,7 @@
 module AirConsolePong.GameUpdate where
 
 import Prelude ((+))
-import AirConsolePong.GameModel (Player, Ball)
+import AirConsolePong.GameModel (Player, Ball, Game)
 
 movePlayer :: Number -> Player -> Player
 movePlayer n p = p { y = p.y + n }
@@ -14,3 +14,16 @@ playerLogic input = movePlayer input.move
 
 ballLogic :: { x :: Number, y :: Number } -> Ball -> Ball
 ballLogic input = moveBall input.x input.y
+
+gameLogic
+    :: { p1 :: { move :: Number }
+       , p2 :: { move :: Number }
+       , ball :: { x :: Number, y :: Number }
+       }
+    -> Game
+    -> Game
+gameLogic inputs gs = gs { p1 = playerLogic inputs.p1 gs.p1
+                         , p2 = playerLogic inputs.p2 gs.p2
+                         , ball = ballLogic inputs.ball gs.ball
+                         }
+

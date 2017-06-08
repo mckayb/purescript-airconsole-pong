@@ -1,59 +1,23 @@
 module AirConsolePong.ScreenMain where
 
-import Prelude (Unit, discard, bind, pure, unit, ($), (<$>), (+))
+import Prelude (Unit, discard, bind, pure, unit, ($), (<$>))
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import Control.Monad.Eff.Timer (TIMER)
-import AirConsole.Global ( getAirConsoleGlobal
-                         , orientationLandscape
-                         , onConnect
-                         , onReady
-                         , onMessage
-                         , onDisconnect
+import AirConsole.Global ( getAirConsoleGlobal , orientationLandscape
+                         , onConnect , onReady , onMessage , onDisconnect
                          )
 import AirConsole.Types (AirConsoleGlobal)
 import AirConsolePong.Views.FFI (updateCanvasDim)
 import AirConsolePong.Views.ScreenStart (view , drawGame)
-import AirConsolePong.GameModel (Game)
+import AirConsolePong.GameModel (initialGameState)
+import AirConsolePong.GameUpdate (gameLogic)
 import Data.Maybe (Maybe(Just, Nothing))
 import DOM (DOM)
 import Graphics.Canvas (CANVAS, getCanvasElementById)
 import Signal (constant, foldp, runSignal, sampleOn)
 import Signal.DOM (animationFrame)
-
-foreign import requestAnimationFrame :: forall e . (Number -> Eff e Unit) -> Eff e Unit
-
-initialGameState :: Game
-initialGameState =
-    { p1: { x: 10.0
-          , y: 50.0
-          , dy: 0.0
-          , score: 0
-          }
-    , p2: { x: 190.0
-          , y: 53.0
-          , dy: 0.0
-          , score: 0
-          }
-    , ball: { x: 100.0
-            , y: 50.0
-            , dx: 0.0 , dy: 0.0
-            }
-    }
-
-gameLogic
-    :: { p1 :: { move :: Number }
-       , p2 :: { move :: Number }
-       , ball :: { x :: Number, y :: Number }
-       }
-    -> Game
-    -> Game
-gameLogic inputs gs = gs { p1 { y = inputs.p1.move + gs.p1.y }
-                         , p2 { y = inputs.p2.move + gs.p2.y }
-                         , ball { x = inputs.ball.x + gs.ball.x
-                                , y = inputs.ball.y + gs.ball.y
-                                }
-                         }
+-- import Signal.Channel (channel, send, subscribe, CHANNEL)
 
 startGame
     :: forall eff
