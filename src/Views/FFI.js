@@ -28,3 +28,16 @@ exports.getClientHeight = function (elem) {
 exports.bitwiseOr = function (x) {
   return x | 0
 }
+
+exports.showStuff = function (x) {
+  return function () {
+    console.log(x)
+  }
+}
+
+exports.clearCanvas = function (canvas) {
+  return function () {
+    const context = canvas.getContext("2d")
+    context.clearRect(0, 0, canvas.width, canvas.height)
+  }
+}

@@ -1,8 +1,9 @@
 module AirConsolePong.ScreenMain where
 
-import Prelude
+import Prelude (Unit, discard, bind, pure, unit, ($), (<$>), (+))
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
+import Control.Monad.Eff.Timer (TIMER)
 import AirConsole.Global ( getAirConsoleGlobal
                          , orientationLandscape
                          , onConnect
@@ -10,33 +11,84 @@ import AirConsole.Global ( getAirConsoleGlobal
                          , onMessage
                          , onDisconnect
                          )
+import AirConsole.Types (AirConsoleGlobal)
 import AirConsolePong.Views.FFI (updateCanvasDim)
 import AirConsolePong.Views.ScreenStart (view , drawGame)
-import AirConsolePong.GameModel (Game, initialGameState)
+import AirConsolePong.GameModel (Game)
 import Data.Maybe (Maybe(Just, Nothing))
 import DOM (DOM)
 import Graphics.Canvas (CANVAS, getCanvasElementById)
+import Signal (constant, foldp, runSignal, sampleOn)
+import Signal.DOM (animationFrame)
 
 foreign import requestAnimationFrame :: forall e . (Number -> Eff e Unit) -> Eff e Unit
-foreign import showStuff :: forall a. a -> Eff (console :: CONSOLE) Unit
 
-startGame :: forall eff. Game -> Eff (canvas :: CANVAS | eff) Unit
-startGame gs = do
+initialGameState :: Game
+initialGameState =
+    { p1: { x: 10.0
+          , y: 50.0
+          , dy: 0.0
+          , score: 0
+          }
+    , p2: { x: 190.0
+          , y: 53.0
+          , dy: 0.0
+          , score: 0
+          }
+    , ball: { x: 100.0
+            , y: 50.0
+            , dx: 0.0 , dy: 0.0
+            }
+    }
+
+gameLogic
+    :: { p1 :: { move :: Number }
+       , p2 :: { move :: Number }
+       , ball :: { x :: Number, y :: Number }
+       }
+    -> Game
+    -> Game
+gameLogic inputs gs = gs { p1 { y = inputs.p1.move + gs.p1.y }
+                         , p2 { y = inputs.p2.move + gs.p2.y }
+                         , ball { x = inputs.ball.x + gs.ball.x
+                                , y = inputs.ball.y + gs.ball.y
+                                }
+                         }
+
+startGame
+    :: forall eff
+     . AirConsoleGlobal
+    -> Eff ( dom :: DOM
+           , timer :: TIMER
+           , console :: CONSOLE
+           , canvas :: CANVAS | eff
+           ) Unit
+startGame ac = do
     mcanvas <- getCanvasElementById "game-canvas"
     case mcanvas of
-         Just canvas -> do
-             _ <- updateCanvasDim canvas
-             drawGame gs canvas true
-         Nothing -> pure unit
+        Just canvas -> do
+            _ <- updateCanvasDim canvas
+            frames <- animationFrame
+            let inputs = constant { p1: { move: 0.0 }
+                                  , p2: { move: 0.0 }
+                                  , ball: { x: 0.5, y: 0.2 }
+                                  }
+            let game = foldp gameLogic initialGameState (sampleOn frames inputs)
+            runSignal (drawGame canvas true <$> game)
+            pure unit
+        Nothing -> pure unit
 
-main :: forall e. Eff (dom :: DOM, canvas :: CANVAS, console :: CONSOLE | e) Unit
+main :: forall e. Eff (dom :: DOM, canvas :: CANVAS, console :: CONSOLE, timer :: TIMER | e) Unit
 main = do
     ac <- getAirConsoleGlobal { orientation: orientationLandscape }
     view ac
-    startGame initialGameState
     _ <- onConnect (\d -> log "on Connection") ac
-    _ <- onMessage (\d x -> log "on Message") ac
+    _ <- onMessage (\d x -> do
+                        log "Blah"
+                        pure $ constant x
+                   ) ac
     _ <- onReady (\d -> log "on Ready") ac
     _ <- onDisconnect (\d -> log "on Disconnect") ac
+    startGame ac
     log "Running"
 

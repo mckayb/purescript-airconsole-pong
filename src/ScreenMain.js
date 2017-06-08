@@ -7,9 +7,3 @@ exports.requestAnimationFrame = function (cb) {
         })
     }
 }
-
-exports.showStuff = function(a) {
-  return function () {
-    console.log(a)
-  }
-}

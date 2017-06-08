@@ -2,6 +2,7 @@ module AirConsolePong.Views.FFI where
 
 import Prelude (Unit)
 import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Console (CONSOLE)
 import Graphics.Canvas ( CANVAS
                        , CanvasElement
                        )
@@ -12,3 +13,5 @@ foreign import isNullOrUndefined :: forall a. a -> Boolean
 foreign import updateCanvasDim :: forall e. CanvasElement -> Eff (canvas :: CANVAS | e) Unit
 foreign import getClientHeight :: forall e. CanvasElement -> Eff (canvas :: CANVAS | e) Number
 foreign import bitwiseOr :: Number -> Number
+foreign import showStuff :: forall a e. a -> Eff (console :: CONSOLE | e) Unit
+foreign import clearCanvas :: forall e. CanvasElement -> Eff (canvas :: CANVAS | e) Unit

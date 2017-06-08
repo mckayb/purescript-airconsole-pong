@@ -2,6 +2,7 @@ module AirConsolePong.Views.ScreenStart where
 
 import AirConsole.Types (AirConsoleGlobal)
 import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Console (CONSOLE)
 import Data.Maybe (Maybe(Just, Nothing))
 import DOM (DOM)
 import DOM.HTML (window)
@@ -14,7 +15,7 @@ import Text.Smolder.HTML.Attributes (id, className)
 import Text.Smolder.Markup (Markup, text, (!))
 import Text.Smolder.Renderer.DOM (render) as S
 import AirConsolePong.GameModel (Game)
-import AirConsolePong.Views.FFI (getClientHeight, bitwiseOr)
+import AirConsolePong.Views.FFI (getClientHeight, bitwiseOr, clearCanvas)
 import Graphics.Canvas ( CANVAS
                        , CanvasElement
                        , getContext2D
@@ -41,12 +42,17 @@ view ac = do
                  Nothing -> pure unit
     pure unit
 
-drawGame :: forall eff. Game -> CanvasElement -> Boolean -> Eff (canvas :: CANVAS | eff) Unit
-drawGame m canvas clear = do
+drawGame
+    :: forall eff
+     . CanvasElement
+    -> Boolean
+    -> Game
+    -> Eff (canvas :: CANVAS | eff) Unit
+drawGame canvas clear m = do
+    _ <- clearCanvas canvas
     ctx <- getContext2D canvas
     ch <- getClientHeight canvas
     divch <- pure (ch / 100.0)
-    fs <- pure (fillColor (if clear then black else white))
     zoom <- pure (\x -> bitwiseOr (x * divch))
     render ctx $
         paddleDrawing (zoom m.p1.x) (zoom m.p1.y)
@@ -71,11 +77,3 @@ paddleDrawing x y = filled fillStyle shape
 
         shape :: Shape
         shape = rectangle x y 10.0 100.0
-
-
-{- updateDOMWait :: forall eff. String -> Eff (dom :: DOM | eff) Unit
-updateDOMWait str = renderToSel ".game__score" str
-
-updateDOMScore :: forall eff. PlayerScore -> PlayerScore -> Eff (dom :: DOM | eff) Unit
-updateDOMScore p1Score p2Score = renderToSel ".game__wait" scoreText
-  where scoreText = (show p1Score) <> " : " <> (show p2Score) -}
