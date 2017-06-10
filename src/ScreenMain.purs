@@ -10,10 +10,13 @@ import AirConsole.Global ( getAirConsoleGlobal, orientationLandscape
 import AirConsole.Types (AirConsoleGlobal, DeviceId)
 import AirConsole.ActivePlayers (convertDeviceIdToPlayerNumber, getActivePlayerDeviceIds, setActivePlayers)
 import AirConsole.Connectivity (getControllerDeviceIds)
-import AirConsolePong.Views.FFI (updateCanvasDim, showStuff)
+import AirConsolePong.Views.FFI (updateCanvasDim)
 import AirConsolePong.Views.ScreenStart (view , drawGame)
-import AirConsolePong.Game.Model (initialGameState)
-import AirConsolePong.Game.Update (gameLogic, Input)
+import AirConsolePong.Game.Model ( initialGameState
+                                 , GameObject(Player1, Player2, Ball)
+                                 , Action
+                                 )
+import AirConsolePong.Game.Update (gameLogic)
 import Data.Maybe (Maybe(Just, Nothing))
 import Data.Nullable (toMaybe)
 import Data.Array (length)
@@ -25,7 +28,7 @@ import Signal.Channel (channel, send, subscribe, Channel, CHANNEL)
 
 startGame
     :: forall eff
-     . Channel Input
+     . Channel Action
     -> Eff ( dom :: DOM
            , timer :: TIMER
            , console :: CONSOLE
@@ -46,7 +49,7 @@ startGame channel = do
 handleConnection
     :: forall e
      . AirConsoleGlobal
-    -> Channel Input
+    -> Channel Action
     -> DeviceId
     -> Eff ( dom :: DOM
            , timer :: TIMER
@@ -77,7 +80,7 @@ handleConnection ac ch d =
 handleDisconnect
     :: forall e
      . AirConsoleGlobal
-    -> Channel Input
+    -> Channel Action
     -> DeviceId
     -> Eff ( dom :: DOM
            , timer :: TIMER
@@ -96,20 +99,16 @@ handleDisconnect ac ch d = do
 handleMessage
     :: forall e a
      . AirConsoleGlobal
-    -> Channel Input
+    -> Channel Action
     -> DeviceId
     -> { move :: Number | a }
-    -> Eff (console :: CONSOLE, channel :: CHANNEL | e) Unit
-handleMessage ac ch d x = do
+    -> Eff (channel :: CHANNEL | e) Unit
+handleMessage ac ch d m = do
     mpn <- pure ((toMaybe <<< convertDeviceIdToPlayerNumber ac) d)
     case mpn of
-         Just 0 -> log "Player 1"
-         Just 1 -> log "Player 2"
-         _ -> log "Nothing"
-    send ch { p1: { move: x.move }
-            , p2: { move: 0.0 }
-            , ball: { x: 0.0, y: 0.0 }
-            }
+         Just 0 -> send ch { object: Player1, move: { x: 0.0, y: m.move } }
+         Just 1 -> send ch { object: Player2, move: { x: 0.0, y: m.move } }
+         _ -> pure unit
 
 main
     :: forall e
@@ -121,14 +120,10 @@ main
            ) Unit
 main = do
     ac <- getAirConsoleGlobal { orientation: orientationLandscape }
-    ch <- channel { p1: { move: 0.0 }
-                  , p2: { move: 0.0 }
-                  , ball: { x: 0.0, y: 0.0 }
-                  }
+    ch <- channel { object: Ball, move: { x: 0.0, y: 0.0 } }
     view ac
     _ <- onConnect (handleConnection ac ch) ac
     _ <- onMessage (handleMessage ac ch) ac
     _ <- onDisconnect (handleDisconnect ac ch) ac
-    startGame ch
     log "Running"
 
