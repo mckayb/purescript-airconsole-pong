@@ -103,8 +103,9 @@ handleMessage
 handleMessage ac ch d x = do
     mpn <- pure ((toMaybe <<< convertDeviceIdToPlayerNumber ac) d)
     case mpn of
-         Just pn -> showStuff pn
-         Nothing -> log "Nothing"
+         Just 0 -> log "Player 1"
+         Just 1 -> log "Player 2"
+         _ -> log "Nothing"
     send ch { p1: { move: x.move }
             , p2: { move: 0.0 }
             , ball: { x: 0.0, y: 0.0 }
