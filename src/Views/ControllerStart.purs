@@ -29,16 +29,16 @@ view ac = do
             markup =
                 div ! className "view default-view" $ do
                 div ! height "1%" $ text ""
-                div #! on "touchstart" (startListener (-1.0))
-                    #! on "touchend" (endListener 0.0)
-                    #! on "mousedown" (startListener (-1.0))
-                    #! on "mouseup" (endListener 0.0)
-                    ! className "button" $ do
-                    div ! className "button_label" $ text "UP"
-                div ! height "8%" $ text ""
                 div #! on "touchstart" (startListener 1.0)
                     #! on "touchend" (endListener 0.0)
                     #! on "mousedown" (startListener 1.0)
+                    #! on "mouseup" (endListener 0.0)
+                    ! className "button" $ do
+                        div ! className "button_label" $ text "UP"
+                div ! height "8%" $ text ""
+                div #! on "touchstart" (startListener (-1.0))
+                    #! on "touchend" (endListener 0.0)
+                    #! on "mousedown" (startListener (-1.0))
                     #! on "mouseup" (endListener 0.0)
                     ! className "button" $ do
                         div ! className "button_label" $ text "DOWN"
