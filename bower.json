@@ -19,7 +19,8 @@
     "purescript-nullable": "^3.0.0",
     "purescript-canvas": "^3.0.0",
     "purescript-drawing": "^3.0.0",
-    "purescript-signal": "^9.0.0"
+    "purescript-signal": "^9.0.0",
+    "purescript-math": "^2.0.0"
   },
   "devDependencies": {}
 }

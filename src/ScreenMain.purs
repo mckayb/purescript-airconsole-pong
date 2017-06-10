@@ -12,11 +12,11 @@ import AirConsole.ActivePlayers (convertDeviceIdToPlayerNumber, getActivePlayerD
 import AirConsole.Connectivity (getControllerDeviceIds)
 import AirConsolePong.Views.FFI (updateCanvasDim)
 import AirConsolePong.Views.ScreenStart (view , drawGame)
-import AirConsolePong.Game.Model ( initialGameState
-                                 , GameObject(Player1, Player2, Ball)
-                                 , Action
-                                 )
-import AirConsolePong.Game.Update (gameLogic)
+import AirConsolePong.Game ( initialGameState
+                           , GameObject(Player1, Player2, Ball)
+                           , Action
+                           , gameLogic
+                           )
 import Data.Maybe (Maybe(Just, Nothing))
 import Data.Nullable (toMaybe)
 import Data.Array (length)
@@ -120,7 +120,7 @@ main
            ) Unit
 main = do
     ac <- getAirConsoleGlobal { orientation: orientationLandscape }
-    ch <- channel { object: Ball, move: { x: 0.0, y: 0.0 } }
+    ch <- channel { object: Ball, move: { x: 0.5, y: 0.2 } }
     view ac
     _ <- onConnect (handleConnection ac ch) ac
     _ <- onMessage (handleMessage ac ch) ac
