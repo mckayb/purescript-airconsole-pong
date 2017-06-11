@@ -1,6 +1,6 @@
 module AirConsolePong.Game where
 
-import Prelude (negate, (+), (||), (>=), (<=), (*), (-), (==), (&&))
+import Prelude (negate, (+), (||), (>), (>=), (<=), (*), (-), (==), (&&))
 import Math (min, max)
 
 type Player =
@@ -97,20 +97,28 @@ gameLogic { object: Player1, move: m } gs =
     let newBall = ballLogic { x: 1.0, y: 1.0 } gs.p1 gs.p2 gs.ball
         p1ScoreAdd = if newBall.x <= bounds.left then 1 else 0
         p2ScoreAdd = if newBall.x >= bounds.right then 1 else 0
-        newP1 = playerLogic m (gs.p1 { score = gs.p1.score + p1ScoreAdd })
 
-     in gs { p1 = newP1
-           , p2 = gs.p2 { score = gs.p2.score + p2ScoreAdd }
-           , ball = newBall
-           }
+     in
+        if p1ScoreAdd > 0 || p2ScoreAdd > 0
+           then { p1: initialPlayer1 { score = gs.p1.score + p1ScoreAdd }
+                , p2: initialPlayer2 { score = gs.p2.score + p2ScoreAdd }
+                , ball: initialBall
+                }
+           else gs { p1 = playerLogic m gs.p1
+                   , ball = newBall
+                   }
 gameLogic { object: Player2, move: m } gs =
     let newBall = ballLogic { x: 1.0, y: 1.0 } gs.p1 gs.p2 gs.ball
         p1ScoreAdd = if newBall.x <= bounds.left then 1 else 0
         p2ScoreAdd = if newBall.x >= bounds.right then 1 else 0
-        newP2 = playerLogic m (gs.p2 { score = gs.p2.score + p2ScoreAdd })
 
-     in gs { p1 = gs.p1 { score = gs.p1.score + p1ScoreAdd }
-           , p2 = newP2
-           , ball = newBall
-           }
+     in
+        if p1ScoreAdd > 0 || p2ScoreAdd > 0
+           then { p1: initialPlayer1 { score = gs.p1.score + p1ScoreAdd }
+                , p2: initialPlayer2 { score = gs.p2.score + p2ScoreAdd }
+                , ball: initialBall
+                }
+           else gs { p2 = playerLogic m gs.p2
+                   , ball = newBall
+                   }
 gameLogic { object: Ball, move: m } gs = gs { ball = ballLogic m gs.p1 gs.p2 gs.ball }
