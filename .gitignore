@@ -7,4 +7,4 @@
 /.purs*
 /.psa*
 *-bundle.js
-src/purescript-airconsole
+*-bundle-pre.js

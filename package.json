@@ -9,8 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "browserify": "pulp browserify -O --main AirConsolePong.ControllerMain --to ./controller-bundle.js && pulp browserify -O --main AirConsolePong.ScreenMain --to ./screen-bundle.js",
-    "server": "pulp server --main AirConsolePong.ControllerMain"
+    "start": "pulp server --main AirConsolePong.ControllerMain"
   },
-  "author": "",
+  "author": "McKay Broderick",
   "license": "MIT"
 }

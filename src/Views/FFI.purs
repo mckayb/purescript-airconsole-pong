@@ -13,5 +13,5 @@ foreign import isNullOrUndefined :: forall a. a -> Boolean
 foreign import updateCanvasDim :: forall e. CanvasElement -> Eff (canvas :: CANVAS | e) Unit
 foreign import getClientHeight :: forall e. CanvasElement -> Eff (canvas :: CANVAS | e) Number
 foreign import bitwiseOr :: Number -> Number
-foreign import showStuff :: forall a e. a -> Eff (console :: CONSOLE | e) Unit
+foreign import trace :: forall a. a -> a
 foreign import clearCanvas :: forall e. CanvasElement -> Eff (canvas :: CANVAS | e) Unit

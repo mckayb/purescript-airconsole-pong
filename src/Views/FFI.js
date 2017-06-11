@@ -29,10 +29,9 @@ exports.bitwiseOr = function (x) {
   return x | 0
 }
 
-exports.showStuff = function (x) {
-  return function () {
-    console.log(x)
-  }
+exports.trace = function (s) {
+  console.log(s)
+  return s
 }
 
 exports.clearCanvas = function (canvas) {

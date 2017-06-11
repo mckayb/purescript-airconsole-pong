@@ -1,6 +1,6 @@
 module AirConsolePong.Game where
 
-import Prelude (negate, (+), (||), (>), (<), (*), (-))
+import Prelude (negate, (+), (||), (>=), (<=), (*), (-), (==), (&&))
 import Math (min, max)
 
 type Player =
@@ -37,20 +37,20 @@ type Bounds = { top :: Number
 
 bounds :: Bounds
 bounds = { top: 99.0
-         , bottom: 1.0
+         , bottom: 15.0
          , left: 1.0
          , right: 199.0
          }
 
 initialPlayer1 :: Player
 initialPlayer1 = { x: 10.0
-                 , y: 50.0
+                 , y: 55.0
                  , score: 0
                  }
 
 initialPlayer2 :: Player
 initialPlayer2 = { x: 190.0
-                 , y: 50.0
+                 , y: 55.0
                  , score: 0
                  }
 
@@ -71,32 +71,48 @@ initialGameState =
 movePlayer :: Number -> Player -> Player
 movePlayer n p = p { y = max (min bounds.top (p.y + n)) bounds.bottom }
 
-moveBall :: Number -> Number -> Ball -> Ball
-moveBall m n b =
-    -- b { x = b.x + m, y = b.y + n, dx = m, dy = n }
-    let
-        calcY = b.y + n
-        collidedWithTop = calcY < 55.0
-        collidedWithBottom = calcY > 45.0
-        dyMult = if collidedWithTop || collidedWithBottom then -1.0 else 1.0
-     in
-        { x: b.x + m
-        , y: b.y + (dyMult * n)
-        , dx: b.dx
-        , dy: b.dy * dyMult
-        }
-
 playerLogic :: Coordinate -> Player -> Player
 playerLogic input = movePlayer input.y
 
-ballLogic :: Player -> Player -> Coordinate -> Ball -> Ball
-ballLogic p1 p2 input = moveBall input.x input.y
+ballLogic :: Coordinate -> Player -> Player -> Ball -> Ball
+ballLogic c p1 p2 b =
+    let
+        -- Ceiling and Floor Collisions
+        collidedWithTop = b.y >= bounds.top
+        collidedWithBottom = b.y <= (bounds.bottom - 14.0)
+        ySpeed = if b.dy == 0.0 then 1.0 else b.dy
+        dy = if collidedWithTop || collidedWithBottom then -ySpeed else ySpeed
+        y = b.y + (c.y * dy)
+
+        -- Player Collisions
+        withinPaddleX p = (b.x <= (p.x + 2.0)) && (b.x >= (p.x - 2.0))
+        withinPaddleY p = (b.y >= (p.y - 14.0)) && (b.y <= p.y)
+        withinPaddle p = withinPaddleX p && withinPaddleY p
+        collidedWithPaddle = (withinPaddle p1) || (withinPaddle p2)
+        xSpeed = if b.dx == 0.0 then 1.0 else b.dx
+        dx = if collidedWithPaddle then -xSpeed else xSpeed
+        x = b.x + (c.x * dx)
+
+        -- Scoring
+        -- p1ScoreAdd = if gs.ball.x <= bounds.left then 1 else 0
+        -- p2ScoreAdd = if gs.ball.x >= bounds.right then 1 else 0
+
+        -- newP1 = gs.p1 { score = gs.p1.score + p1ScoreAdd }
+        -- newP2 = gs.p2 { score = gs.p2.score + p2ScoreAdd }
+
+     in { x, y, dx, dy }
 
 gameLogic :: Action -> Game -> Game
-gameLogic { object: Player1, move: m } gs = gs { p1 = playerLogic m gs.p1
-                                               -- , ball = ballLogic gs.p1 gs.p2 ({ x: gs.ball.dx, y: gs.ball.dy }) gs.ball
-                                               }
-gameLogic { object: Player2, move: m } gs = gs { p2 = playerLogic m gs.p2
-                                               -- , ball = ballLogic gs.p1 gs.p2 ({ x: gs.ball.dx, y: gs.ball.dy }) gs.ball
-                                               }
-gameLogic { object: Ball, move: m } gs = gs { ball = ballLogic gs.p1 gs.p2 m gs.ball }
+gameLogic { object: Player1, move: m } gs =
+    let newBall = ballLogic { x: 1.0, y: 1.0 } gs.p1 gs.p2 gs.ball
+        newP1 = playerLogic m gs.p1
+     in gs { p1 = newP1
+           , ball = newBall
+           }
+gameLogic { object: Player2, move: m } gs =
+    let newBall = ballLogic { x: 1.0, y: 1.0 } gs.p1 gs.p2 gs.ball
+        newP2 = playerLogic m gs.p2
+     in gs { p2 = newP2
+           , ball = newBall
+           }
+gameLogic { object: Ball, move: m } gs = gs { ball = ballLogic m gs.p1 gs.p2 gs.ball }

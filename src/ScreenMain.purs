@@ -10,7 +10,7 @@ import AirConsole.Global ( getAirConsoleGlobal, orientationLandscape
 import AirConsole.Types (AirConsoleGlobal, DeviceId)
 import AirConsole.ActivePlayers (convertDeviceIdToPlayerNumber, getActivePlayerDeviceIds, setActivePlayers)
 import AirConsole.Connectivity (getControllerDeviceIds)
-import AirConsolePong.Views.FFI (updateCanvasDim, showStuff)
+import AirConsolePong.Views.FFI (updateCanvasDim)
 import AirConsolePong.Views.ScreenStart (view , drawGame)
 import AirConsolePong.Game ( initialGameState
                            , GameObject(Player1, Player2, Ball)
@@ -104,7 +104,6 @@ handleMessage
     -> { move :: Number | a }
     -> Eff (console :: CONSOLE, channel :: CHANNEL | e) Unit
 handleMessage ac ch d m = do
-    showStuff m
     mpn <- pure ((toMaybe <<< convertDeviceIdToPlayerNumber ac) d)
     case mpn of
          Just 0 -> send ch { object: Player1, move: { x: 0.0, y: m.move } }
@@ -121,7 +120,7 @@ main
            ) Unit
 main = do
     ac <- getAirConsoleGlobal { orientation: orientationLandscape }
-    ch <- channel { object: Ball, move: { x: 0.0, y: 0.0 } }
+    ch <- channel { object: Ball, move: { x: 1.0, y: 1.0 } }
     view ac
     _ <- onConnect (handleConnection ac ch) ac
     _ <- onMessage (handleMessage ac ch) ac

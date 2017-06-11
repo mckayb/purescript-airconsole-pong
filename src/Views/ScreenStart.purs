@@ -15,17 +15,19 @@ import Text.Smolder.HTML.Attributes (id, className)
 import Text.Smolder.Markup (Markup, text, (!))
 import Text.Smolder.Renderer.DOM (render) as S
 import AirConsolePong.Game (Game)
-import AirConsolePong.Views.FFI (clearCanvas, showStuff)
+import AirConsolePong.Views.FFI (clearCanvas)
 import Graphics.Canvas ( CANVAS
                        , CanvasElement
                        , getContext2D
                        , getCanvasWidth
                        , getCanvasHeight
                        )
-import Graphics.Drawing ( render , fillColor
+import Graphics.Drawing ( render, fillColor
                         , filled, rectangle, circle
                         , Drawing, Shape, FillStyle
                         )
+import Graphics.Drawing (text) as GD
+import Graphics.Drawing.Font (fantasy, bold, font, Font)
 import Color (white)
 import Prelude hiding (div, id)
 
@@ -43,6 +45,18 @@ view ac = do
                  Just x -> S.render x markup
                  Nothing -> pure unit
     pure unit
+
+scoreDrawing :: Number -> Number -> Int -> Int -> Drawing
+scoreDrawing x y scoreP1 scoreP2 = GD.text f x y fillStyle scoreText
+    where
+          f :: Font
+          f = font fantasy 64 bold
+
+          fillStyle :: FillStyle
+          fillStyle = fillColor white
+
+          scoreText :: String
+          scoreText = show scoreP1 <> " : " <> show scoreP2
 
 drawGame
     :: forall eff
@@ -64,8 +78,9 @@ drawGame canvas clear m = do
     let scaleY = \n -> (100.0 - n) * (ch / 100.0)
 
     render ctx $
-        paddleDrawing (scaleX m.p1.x) (scaleY m.p1.y - 50.0)
-        <> paddleDrawing (scaleX m.p2.x) (scaleY m.p2.y - 50.0)
+        scoreDrawing (scaleX 95.0) (scaleY 95.0) m.p1.score m.p2.score
+        <> paddleDrawing (scaleX m.p1.x) (scaleY m.p1.y)
+        <> paddleDrawing (scaleX m.p2.x) (scaleY m.p2.y)
         <> ballDrawing (scaleX m.ball.x) (scaleY m.ball.y)
     pure unit
 
