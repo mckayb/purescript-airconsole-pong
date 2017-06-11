@@ -60,18 +60,12 @@ drawGame canvas clear m = do
     -- To make it easier for me, I want to reflect
     -- all points to have (0,0) be the bottom left
     -- I also want x in [0, 200] and y in [0, 100]
-
-    -- 720
-    showStuff cw
-    -- 1440
-    showStuff ch
-
     let scaleX = \n -> n * (cw / 200.0)
     let scaleY = \n -> (100.0 - n) * (ch / 100.0)
 
     render ctx $
-        paddleDrawing (scaleX m.p1.x) (scaleY m.p1.y)
-        <> paddleDrawing (scaleX m.p2.x) (scaleY m.p2.y)
+        paddleDrawing (scaleX m.p1.x) (scaleY m.p1.y - 50.0)
+        <> paddleDrawing (scaleX m.p2.x) (scaleY m.p2.y - 50.0)
         <> ballDrawing (scaleX m.ball.x) (scaleY m.ball.y)
     pure unit
 

@@ -70,21 +70,21 @@ initialGameState =
 
 movePlayer :: Number -> Player -> Player
 movePlayer n p = p { y = max (min bounds.top (p.y + n)) bounds.bottom }
--- movePlayer n p = p { y = p.y + n }
 
 moveBall :: Number -> Number -> Ball -> Ball
-moveBall m n b = b { x = b.x + m, y = b.y + n, dx = m, dy = n }
-    {- let
+moveBall m n b =
+    -- b { x = b.x + m, y = b.y + n, dx = m, dy = n }
+    let
         calcY = b.y + n
         collidedWithTop = calcY < 55.0
         collidedWithBottom = calcY > 45.0
         dyMult = if collidedWithTop || collidedWithBottom then -1.0 else 1.0
      in
         { x: b.x + m
-        , y: if collidedWithTop || collidedWithBottom then b.y - n else calcY
+        , y: b.y + (dyMult * n)
         , dx: b.dx
         , dy: b.dy * dyMult
-    } -}
+        }
 
 playerLogic :: Coordinate -> Player -> Player
 playerLogic input = movePlayer input.y
