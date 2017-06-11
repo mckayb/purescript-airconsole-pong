@@ -2,7 +2,6 @@ module AirConsolePong.Views.FFI where
 
 import Prelude (Unit)
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE)
 import Graphics.Canvas ( CANVAS
                        , CanvasElement
                        )

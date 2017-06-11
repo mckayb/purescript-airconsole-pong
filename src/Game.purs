@@ -68,11 +68,8 @@ initialGameState =
     , ball: initialBall
     }
 
-movePlayer :: Number -> Player -> Player
-movePlayer n p = p { y = max (min bounds.top (p.y + n)) bounds.bottom }
-
 playerLogic :: Coordinate -> Player -> Player
-playerLogic input = movePlayer input.y
+playerLogic input p = p { y = max (min bounds.top (p.y + input.y)) bounds.bottom }
 
 ballLogic :: Coordinate -> Player -> Player -> Ball -> Ball
 ballLogic c p1 p2 b =
@@ -93,26 +90,27 @@ ballLogic c p1 p2 b =
         dx = if collidedWithPaddle then -xSpeed else xSpeed
         x = b.x + (c.x * dx)
 
-        -- Scoring
-        -- p1ScoreAdd = if gs.ball.x <= bounds.left then 1 else 0
-        -- p2ScoreAdd = if gs.ball.x >= bounds.right then 1 else 0
-
-        -- newP1 = gs.p1 { score = gs.p1.score + p1ScoreAdd }
-        -- newP2 = gs.p2 { score = gs.p2.score + p2ScoreAdd }
-
      in { x, y, dx, dy }
 
 gameLogic :: Action -> Game -> Game
 gameLogic { object: Player1, move: m } gs =
     let newBall = ballLogic { x: 1.0, y: 1.0 } gs.p1 gs.p2 gs.ball
-        newP1 = playerLogic m gs.p1
+        p1ScoreAdd = if newBall.x <= bounds.left then 1 else 0
+        p2ScoreAdd = if newBall.x >= bounds.right then 1 else 0
+        newP1 = playerLogic m (gs.p1 { score = gs.p1.score + p1ScoreAdd })
+
      in gs { p1 = newP1
+           , p2 = gs.p2 { score = gs.p2.score + p2ScoreAdd }
            , ball = newBall
            }
 gameLogic { object: Player2, move: m } gs =
     let newBall = ballLogic { x: 1.0, y: 1.0 } gs.p1 gs.p2 gs.ball
-        newP2 = playerLogic m gs.p2
-     in gs { p2 = newP2
+        p1ScoreAdd = if newBall.x <= bounds.left then 1 else 0
+        p2ScoreAdd = if newBall.x >= bounds.right then 1 else 0
+        newP2 = playerLogic m (gs.p2 { score = gs.p2.score + p2ScoreAdd })
+
+     in gs { p1 = gs.p1 { score = gs.p1.score + p1ScoreAdd }
+           , p2 = newP2
            , ball = newBall
            }
 gameLogic { object: Ball, move: m } gs = gs { ball = ballLogic m gs.p1 gs.p2 gs.ball }
