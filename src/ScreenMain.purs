@@ -88,12 +88,12 @@ handleDisconnect
            , canvas :: CANVAS
            | e ) Unit
 handleDisconnect ac ch d = do
-    mpn <- pure ((toMaybe <<< convertDeviceIdToPlayerNumber ac) d)
+    let mpn = (toMaybe <<< convertDeviceIdToPlayerNumber ac) d
     case mpn of
-         Just pn -> do
-             _ <- setActivePlayers ac 0
-             pure unit
-         Nothing -> pure unit
+        Just pn -> do
+            _ <- setActivePlayers ac 0
+            pure unit
+        Nothing -> pure unit
     handleConnection ac ch d
 
 handleMessage
@@ -103,12 +103,12 @@ handleMessage
     -> DeviceId
     -> { move :: Number | a }
     -> Eff (console :: CONSOLE, channel :: CHANNEL | e) Unit
-handleMessage ac ch d m = do
-    mpn <- pure ((toMaybe <<< convertDeviceIdToPlayerNumber ac) d)
-    case mpn of
-         Just 0 -> send ch { object: Player1, move: { x: 0.0, y: m.move } }
-         Just 1 -> send ch { object: Player2, move: { x: 0.0, y: m.move } }
-         _ -> pure unit
+handleMessage ac ch d m =
+    let mpn = (toMaybe <<< convertDeviceIdToPlayerNumber ac) d
+     in case mpn of
+            Just 0 -> send ch { object: Player1, move: { x: 0.0, y: m.move } }
+            Just 1 -> send ch { object: Player2, move: { x: 0.0, y: m.move } }
+            _ -> pure unit
 
 main
     :: forall e

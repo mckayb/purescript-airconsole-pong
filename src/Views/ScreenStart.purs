@@ -29,7 +29,9 @@ import Graphics.Drawing ( render, fillColor
 import Graphics.Drawing (text) as GD
 import Graphics.Drawing.Font (fantasy, bold, font, Font)
 import Color (white)
-import Prelude hiding (div, id)
+import Prelude ( Unit, map, bind, show, pure, unit, discard
+               , (/), (-), (*), ($), (<$>), (>>=), (<>)
+               )
 
 view :: forall eff. AirConsoleGlobal -> Eff (dom :: DOM | eff) Unit
 view ac = do
@@ -48,15 +50,15 @@ view ac = do
 
 scoreDrawing :: Number -> Number -> Int -> Int -> Drawing
 scoreDrawing x y scoreP1 scoreP2 = GD.text f x y fillStyle scoreText
-    where
-          f :: Font
-          f = font fantasy 64 bold
+  where
+    f :: Font
+    f = font fantasy 64 bold
 
-          fillStyle :: FillStyle
-          fillStyle = fillColor white
+    fillStyle :: FillStyle
+    fillStyle = fillColor white
 
-          scoreText :: String
-          scoreText = show scoreP1 <> " : " <> show scoreP2
+    scoreText :: String
+    scoreText = show scoreP1 <> " : " <> show scoreP2
 
 drawGame
     :: forall eff
@@ -78,7 +80,7 @@ drawGame canvas clear m = do
     let scaleY = \n -> (100.0 - n) * (ch / 100.0)
 
     render ctx $
-        scoreDrawing (scaleX 95.0) (scaleY 95.0) m.p1.score m.p2.score
+        scoreDrawing (scaleX 95.0) (scaleY 90.0) m.p1.score m.p2.score
         <> paddleDrawing (scaleX m.p1.x) (scaleY m.p1.y)
         <> paddleDrawing (scaleX m.p2.x) (scaleY m.p2.y)
         <> ballDrawing (scaleX m.ball.x) (scaleY m.ball.y)
@@ -86,18 +88,18 @@ drawGame canvas clear m = do
 
 ballDrawing :: Number -> Number -> Drawing
 ballDrawing x y = filled fillStyle shape
-    where
-          fillStyle :: FillStyle
-          fillStyle = fillColor white
+  where
+    fillStyle :: FillStyle
+    fillStyle = fillColor white
 
-          shape :: Shape
-          shape = circle x y 6.0
+    shape :: Shape
+    shape = circle x y 6.0
 
 paddleDrawing :: Number -> Number -> Drawing
 paddleDrawing x y = filled fillStyle shape
   where
-        fillStyle :: FillStyle
-        fillStyle = fillColor white
+    fillStyle :: FillStyle
+    fillStyle = fillColor white
 
-        shape :: Shape
-        shape = rectangle x y 10.0 100.0
+    shape :: Shape
+    shape = rectangle x y 10.0 100.0
