@@ -7,7 +7,7 @@ import Control.Monad.Eff.Timer (TIMER)
 import AirConsole.Global ( getAirConsoleGlobal, orientationLandscape
                          , onConnect, onMessage, onDisconnect
                          )
-import AirConsole.Types (AirConsoleGlobal, DeviceId)
+import AirConsole.Types (AirConsoleGlobal, DeviceId, orientation)
 import AirConsole.ActivePlayers (convertDeviceIdToPlayerNumber, getActivePlayerDeviceIds, setActivePlayers)
 import AirConsole.Connectivity (getControllerDeviceIds)
 import AirConsolePong.Views.FFI (updateCanvasDim)
@@ -20,6 +20,7 @@ import AirConsolePong.Game ( initialGameState
 import Data.Maybe (Maybe(Just, Nothing))
 import Data.Nullable (toMaybe)
 import Data.Array (length)
+import Data.Options ((:=))
 import DOM (DOM)
 import Graphics.Canvas (CANVAS, getCanvasElementById)
 import Signal (foldp, runSignal, sampleOn)
@@ -119,7 +120,7 @@ main
            , timer :: TIMER | e
            ) Unit
 main = do
-    ac <- getAirConsoleGlobal { orientation: orientationLandscape }
+    ac <- getAirConsoleGlobal (orientation := orientationLandscape)
     ch <- channel { object: Ball, move: { x: 1.0, y: 1.0 } }
     view ac
     _ <- onConnect (handleConnection ac ch) ac
