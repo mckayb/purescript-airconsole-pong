@@ -1,5 +1,6 @@
 module AirConsolePong.Views.ControllerStart where
 
+import Prelude (Unit, pure, unit, negate, bind, discard, map, ($), (>>=), (<$>))
 import Control.Monad.Eff (Eff)
 import Text.Smolder.HTML (div)
 import Text.Smolder.HTML.Attributes (className, height)
@@ -15,7 +16,6 @@ import DOM.HTML.Document (body)
 import DOM.HTML.Types (htmlElementToElement)
 import DOM.Event.EventTarget (EventListener, eventListener)
 import Data.Maybe (Maybe(Just, Nothing))
-import Prelude hiding (div)
 
 view :: forall eff. AirConsoleGlobal -> Eff (dom :: DOM | eff) Unit
 view ac = do
@@ -49,5 +49,5 @@ view ac = do
                  Nothing -> pure unit
     pure unit
 
-move :: forall a b c. AirConsoleGlobal -> Number -> a -> Eff b c
+move :: forall a b. AirConsoleGlobal -> Number -> a -> Eff b Unit
 move ac n = \_ -> message ac screen { move: n }

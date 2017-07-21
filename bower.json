@@ -12,7 +12,7 @@
   "dependencies": {
     "purescript-prelude": "^3.0.0",
     "purescript-console": "^3.0.0",
-    "purescript-airconsole": "^0.3.0",
+    "purescript-airconsole": "^0.3.1",
     "purescript-dom": "^4.4.0",
     "purescript-smolder-dom": "^1.1.0",
     "purescript-smolder": "^8.0.0",
